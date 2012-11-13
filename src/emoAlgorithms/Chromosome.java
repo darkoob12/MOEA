@@ -13,29 +13,24 @@ import java.util.HashSet;
 public class Chromosome implements Comparator<Chromosome> {
 	private int mChromeSize;
 	public double[] mGenes;
-	
 	// these fields are required when using NSGA2 and its sub-classes
 	/**
 	 * a set containing chromosomes which this one dominates.
 	 * Si sets in the original work
 	 */
 	public HashSet<Chromosome> domination_set;
-	
 	/**
 	 * number of solutions which dominate this one
 	 * it this count becomes zero then chromosome is non-dominated
 	 */
 	protected int dominant_count;	
-	
 	/**
 	 * each chromosome should know to which domination front it belongs
 	 */
-	protected int domination_rank;
+	protected int domination_rank;		
 	public double[] fitness_vector;		// this chromosome knows nothing about number of objectives
 										// other classes will set this field
-	
 	public double crowding_distance;	//this will be set by NSGA2 algorithm
-	
 	public Chromosome parents[];		// reference to the parents of this chromosome if available
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +40,7 @@ public class Chromosome implements Comparator<Chromosome> {
 	/** Constructor
 	 * 
 	 * this function creates a new object of this type
-	 * 
+	 * simply initialize the member variables to default values
 	 * @param argSize
 	 */
 	public Chromosome(int argSize) {
@@ -53,7 +48,7 @@ public class Chromosome implements Comparator<Chromosome> {
 		mGenes = new double[this.getChromeSize()];
 		domination_set = new HashSet<Chromosome>();
 		dominant_count = 0;
-		setRank(-1);		//this will tell processed and non-processed chromosomes from each other
+		domination_rank = Integer.MAX_VALUE;
 	}
 	
 	
@@ -74,6 +69,11 @@ public class Chromosome implements Comparator<Chromosome> {
 		return cp;
 	}
 	
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+	//getter / setter methods
+	//////////////////////////////////////////////////////////////////////////////////////////
+
 	
 	/**	Gets Size
 	 * 
@@ -125,6 +125,11 @@ public class Chromosome implements Comparator<Chromosome> {
 		}
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// other methods
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	
 
 	/**
 	 * since this chromosome is real coded there is nothing for decoding
@@ -144,7 +149,7 @@ public class Chromosome implements Comparator<Chromosome> {
 	 */
 	public boolean crowded_compare_to(Chromosome other_chrom) {
 		boolean ret = false;
-		if ((this.getRank() > other_chrom.getRank()) || 
+		if ((this.getRank() < other_chrom.getRank()) || 
 		((this.getRank() == other_chrom.getRank()) && (this.crowding_distance > other_chrom.crowding_distance))) {
 			ret = true;		
 		}
