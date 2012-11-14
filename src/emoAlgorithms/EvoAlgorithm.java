@@ -10,10 +10,13 @@ package emoAlgorithms;
  *
  */
 public abstract class EvoAlgorithm {
-	protected final double _defaultPm = 0.05;		//default value for mutation rate
-	protected final double _defaultPc = 0.88;		//default value for crossover rate
+	protected final double _defaultPm = 0.08;		//default value for mutation rate
+	protected final double _defaultPc = 0.9;		//default value for crossover rate
 	protected final int _defaultPopSize = 100;		//default value for size of population
 	protected final int _defaultMaxGen = 500;		//default value for maximum number of generations
+	
+	public boolean mSilent;		// this will be used for controlling algorithms output
+
 	
 	public MOProblem mProblem;	// problem which algorithm tries to solve
 	private double Pm;	// mutation rate

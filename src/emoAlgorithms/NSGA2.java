@@ -5,10 +5,11 @@
 package emoAlgorithms;
 
 
-import java.io.IOException;
+import java.io.FileWriter;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 
 /** NSGA2 algorithm
@@ -19,12 +20,10 @@ import java.util.Random;
  * @author Shahab
  *
  */
-public class NSGA2 extends EvoAlgorithm {
-	public boolean mSilent;
-	
+public class NSGA2 extends EvoAlgorithm {	
 	public Population cur_pop;		// we can use this as the combined population	
 	public Population child_pop;	
-	public Population next_pop;	
+	public Population next_pop;
 	
 	/**
 	 * simple constructor for the class
@@ -64,10 +63,7 @@ public class NSGA2 extends EvoAlgorithm {
 		make_new_pop();		//this function populates child_pop using cur_pop
 		gen_count = 0;		//initializing generation counter
 		// evaluate fitness for each newly created chromosome;
-		evaluate(child_pop);
-				
-//		System.out.println("First Pop size: " + cur_pop.mMembers.size() + "  Child size: " + child_pop.mMembers.size());
-		
+		evaluate(child_pop);		
 		// main loop
 		boolean done = false;
 		while (!done) {
@@ -105,13 +101,6 @@ public class NSGA2 extends EvoAlgorithm {
 					}
 				}
 			}
-/*			
-			if (next_pop.mMembers.size() != 100) {
-				System.out.println("Conflict: cur =>" + cur_pop.mMembers.size()+ ",  next => " + next_pop.mMembers.size());
-				printCollection(script_f);
-			}
-*/			
-
 			// passing a generation 
 			cur_pop = next_pop;
 			gen_count++;
@@ -121,31 +110,10 @@ public class NSGA2 extends EvoAlgorithm {
 				done = true;
 			}
 			
-			System.out.println(cur_pop.toString());
-			try {
-				System.in.read();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			
 			// create new chromosomes
 			make_new_pop();
 			// evaluating fitness for newly created chromosomes			
-			evaluate(child_pop);
-			
-			System.out.println(child_pop.toString());
-			try {
-				System.in.read();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			
-/*			if (child_pop.mMembers.size() != 100) {
-				System.out.println("Conflict: cur =>" + cur_pop.mMembers.size()+ ",  next => " + child_pop.mMembers.size());
-			}
-*/
+			evaluate(child_pop);			
 		}
 		
 	}
@@ -196,8 +164,9 @@ public class NSGA2 extends EvoAlgorithm {
 		// each front is a set containing chromosomes
 		ArrayList<HashSet<Chromosome>> F = new ArrayList<HashSet<Chromosome>>();
 		//first we create highest non-dominated front - F1
-		F.add(new HashSet<Chromosome>());
-		
+		HashSet<Chromosome> Q = new HashSet<Chromosome>();
+		int dominates = 0;
+		int dominated = 0;
 		// chrom is P in the original work
 		for (Chromosome chrom : pop) {
 			//initialize internal fields of chromosome
@@ -205,42 +174,40 @@ public class NSGA2 extends EvoAlgorithm {
 			chrom.setDCount(0);					//no one dominates this chromosome
 			// other_chrom is Q in original work
 			for (Chromosome other_chrom : pop) {
-				if (Utility.pareto_dominate(chrom.fitness_vector, other_chrom.fitness_vector)) {
+				if (mProblem.dominates(chrom.fitness_vector, other_chrom.fitness_vector)) {
 					//add other_chrom to current chromosome's domination set
 					chrom.domination_set.add(other_chrom);
-				} else if (Utility.pareto_dominate(other_chrom.fitness_vector, chrom.fitness_vector)) {
+					dominates++;
+				} else if (mProblem.dominates(other_chrom.fitness_vector, chrom.fitness_vector)) {
 					//increase current chromosome's dominant count by 1
 					chrom.setDCount(chrom.getDCount() + 1);
-				}
+					dominated++;
+				} 
 			}
 			if (chrom.getDCount() == 0) {
 				// this chromosome is non-dominated
 				chrom.setRank(0);	//set rank to one
-				F.get(0).add(chrom);	//add to first non-dominated front
+				Q.add(chrom);	//add to first non-dominated front
 			}
 		} // for loop - iterating through all chromosomes
+		F.add(Q);		// adding first front to the collection
 		
-		/**
-		 * up to here the only source of error is dominates method of class MOProblem.
-		 * or fitness_vector of the chomosomes 
-		 */
-		
-		/*
-		 * This code-snippet is for testing the pre-calculations
-		 */
-		int acc_np = 0,acc_sp = 0;	//accumulators
-		for (Chromosome p : pop) {
-			acc_np += p.getDCount();
-			acc_sp += p.domination_set.size();
+		int sum_sp = 0;
+		int sum_np = 0;
+		for (Chromosome p : cur_pop) {
+			sum_sp += p.domination_set.size();
+			sum_np += p.getDCount();
 		}
-		if (acc_np != acc_sp) {
-			System.out.println( "Error : " +
-					"np-sum = " + acc_np +
-					"  sp_sum = " + acc_sp);
-			try {
-				System.in.read();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+		if (sum_np != sum_sp) {
+			System.out.println("ERROR");
+			if ((dominated != sum_np) || (dominates != sum_sp)){
+				System.out.println("SUPER ERROR");
+				String output = "Actual operations:\n";
+				output += "dominant : " + dominated + "  dominated : " + dominates + "\n";
+				output += "resulted data:\n";
+				output += "sum_np : " + sum_np + "   sum_sp : " +sum_sp + "\n"; 
+				System.out.println(output);
+				System.exit(1);
 			}
 		}
 		
@@ -248,7 +215,7 @@ public class NSGA2 extends EvoAlgorithm {
 		// by doing this we will reduce computation time severely
 		int i = 0;	// indicating the first front
 		while (true) {	// this loop stops when there is no other example to rank
-			HashSet<Chromosome> Q = new HashSet<Chromosome>();	// a temporary set for saving next Frontier
+			Q = new HashSet<Chromosome>();	// a temporary set for saving next Frontier
 			for (Chromosome p : F.get(i)) {
 				for (Chromosome q : p.domination_set) {
 					q.setDCount(q.getDCount() - 1);		//decrease their domination count by 1
@@ -258,7 +225,7 @@ public class NSGA2 extends EvoAlgorithm {
 						Q.add(q);	// adding q to the next front
 					}
 					else if (q.getDCount() < 0) {
-						System.out.println("ERROR : Negative value for domination count");
+						//System.out.println("ERROR : Negative value for domination count");
 					}
 				}
 			}
@@ -269,19 +236,9 @@ public class NSGA2 extends EvoAlgorithm {
 				F.add(Q);
 			}
 		} //while loop
-		if (collectionTotalSize(F) != getPop_size() * 2) {
-			System.out.println(collectionTotalSize(F));	
-			try {
-				System.in.read();
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
-		}
-				
+		System.out.println(gen_count);
 		return F;
-	}
-	
+	}	
 	
 	/**
 	 * returns sum of sizes of all members of a given collection	
@@ -337,8 +294,8 @@ public class NSGA2 extends EvoAlgorithm {
 				child_2 = children_list[1];
 			} else {
 				// in this case we simply copy the parents
-				child_1 = par_1.copy_me();
-				child_2 = par_2.copy_me();
+				child_1 = (Chromosome)Utility.deep_copy(par_1);
+				child_2 = (Chromosome)Utility.deep_copy(par_2);
 			}
 			// apply mutation?
 			rnd_num = rnd.nextDouble();
@@ -511,6 +468,30 @@ public class NSGA2 extends EvoAlgorithm {
 					chrom_list[j] = temp;
 				}
 			}
+		}
+	}
+	
+	/**
+	 * creating a text file containing current population
+	 * @param path	
+	 */
+	protected void create_log_file(String path) {
+		// create log file.
+		FileWriter writer;
+		try {
+			writer = new FileWriter(path);
+			for (Chromosome p : cur_pop) {
+				writer.write(cur_pop.mMembers.indexOf(p) + " : fit = " + Utility.arr2str(p.fitness_vector) 
+				+ "\n domination_set = { ");
+				for (Chromosome q : p.domination_set) {
+					writer.write(cur_pop.mMembers.indexOf(q) + " ");
+				}
+				writer.write("} dominant_count = " + p.getDCount() + "\n\n\n");
+			}
+			writer.flush();
+			writer.close();
+		} catch (Exception e2) {
+			e2.printStackTrace();
 		}
 	}
 }

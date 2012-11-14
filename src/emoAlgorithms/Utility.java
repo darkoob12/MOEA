@@ -1,5 +1,12 @@
 package emoAlgorithms;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /** Utility Class
  * 
  * Contains some general static functions
@@ -94,5 +101,41 @@ public class Utility {
 		}
 		return ret;
 	}
-
+	
+	/**
+	 * returns a string representation of an array
+	 * @param array	a double array	
+	 * @return	
+	 */
+	public static String arr2str(double array[]) {
+		String ret = "< ";
+		for (double d : array) {
+			ret += d + " ";
+		}
+		ret += ">";
+		return ret;
+	}
+	
+	/**
+	 * This function will create a deep copy of the argument
+	 * @param arg_obj the object to be copied
+	 * @return a reference to new object
+	 */
+	public static Object deep_copy(Object arg_obj) {
+		Object copy_obj = null;
+		try {
+			ByteArrayOutputStream baOut = new ByteArrayOutputStream();
+			ObjectOutputStream oOut = new ObjectOutputStream(new BufferedOutputStream(baOut));
+			oOut.writeObject(arg_obj);
+			oOut.flush();
+			ByteArrayInputStream baIn = new ByteArrayInputStream(baOut.toByteArray());
+			ObjectInputStream oIn = new ObjectInputStream(baIn);
+			copy_obj = oIn.readObject();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return copy_obj;
+	}
 }

@@ -22,6 +22,7 @@ public abstract class MOProblem {
 	
 	public abstract double[] fitness(double[] point);
 
+	
 	/** returns number of decision variables
 	 * @return the mNumVariables
 	 */
@@ -55,10 +56,7 @@ public abstract class MOProblem {
 	 * 
 	 * checks whether fitnees1 dominates fitness2
 	 * 
-	 * true -> fit1 dominates fit2
-	 * for instance in minimization
-	 * dominates([12,23,11,12],[12,24,11,12]) = true
-	 * dominates([1,2,1,2],[1,2,1,2]) = false
+	 * i have tested this function by manual data
 	 * 
 	 * @param fit1	a fitness vector
 	 * @param fit2	a fitness vector

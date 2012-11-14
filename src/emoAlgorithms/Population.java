@@ -14,15 +14,10 @@ import java.util.Iterator;
 public class Population implements Iterable<Chromosome> {
 	private int mSize;
 	
-	/**
-	 * an array of chromosomes, population size can not change during the run
-	 */
 	public ArrayList<Chromosome> mMembers; 
 	
-	/** Constructor
-	 * 
+	/** Constructor 
 	 * creates a new instance of this class
-	 * 
 	 * @param argSize
 	 */
 	public Population(int argSize) {

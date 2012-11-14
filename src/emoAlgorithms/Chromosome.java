@@ -1,5 +1,12 @@
 package emoAlgorithms;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashSet;
 
@@ -10,7 +17,11 @@ import java.util.HashSet;
  * @author Shahab
  *
  */
-public class Chromosome implements Comparator<Chromosome> {
+public class Chromosome implements Comparator<Chromosome>, Serializable {
+	/**
+	 * version for the class for later changes
+	 */
+	private static final long serialVersionUID = 1L;
 	private int mChromeSize;
 	public double[] mGenes;
 	// these fields are required when using NSGA2 and its sub-classes
@@ -69,6 +80,27 @@ public class Chromosome implements Comparator<Chromosome> {
 		return cp;
 	}
 	
+	/**
+	 * copy this chromosome using object serialization into memory
+	 * @return a reference to copy of this object
+	 */
+	public Chromosome hard_copy_me() {
+		Chromosome copy_chrom = null;
+		try {
+			ByteArrayOutputStream baOut = new ByteArrayOutputStream();
+			ObjectOutputStream oOut = new ObjectOutputStream(new BufferedOutputStream(baOut));
+			oOut.writeObject(this);
+			oOut.flush();
+			ByteArrayInputStream baIn = new ByteArrayInputStream(baOut.toByteArray());
+			ObjectInputStream oIn = new ObjectInputStream(baIn);
+			copy_chrom = (Chromosome)oIn.readObject();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return copy_chrom;
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//getter / setter methods
@@ -117,12 +149,7 @@ public class Chromosome implements Comparator<Chromosome> {
 		return dominant_count;
 	}
 	public void setDCount(int newCount){
-		if (newCount >= 0) {
-			this.dominant_count = newCount;
-		} else {
-			System.out.println("Wow, Negative value: " + newCount);
-			this.dominant_count = 0;
-		}
+		this.dominant_count = newCount;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -187,6 +214,15 @@ public class Chromosome implements Comparator<Chromosome> {
 			ret += ")";
 		}
 		return ret;
+	}
+	
+	/**
+	 * reset this object's genes to zero vector
+	 */
+	public void reset() { 
+		for (int i = 0;i < mGenes.length;i++) {
+			mGenes[i] = 1.1111;
+		}
 	}
 	
 }
