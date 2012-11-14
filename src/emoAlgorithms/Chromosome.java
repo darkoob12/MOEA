@@ -1,11 +1,5 @@
 package emoAlgorithms;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -64,44 +58,22 @@ public class Chromosome implements Comparator<Chromosome>, Serializable {
 	
 	
 	/**
-	 * this returns a copy of the chromosome
-	 * later i may use the Object.clone() method
-	 * @return a chromosome that is the same to this one
+	 * this is a copy constructor
+	 * @param source a chromosome to copy data from
 	 */
-	public Chromosome copy_me() {
-		Chromosome cp = new Chromosome(this.getChromeSize());
-		cp.mGenes = this.mGenes;
-		cp.fitness_vector = this.fitness_vector;
-		cp.dominant_count = this.dominant_count;
-		cp.domination_rank = this.domination_rank;
-		cp.domination_set = this.domination_set;
-		cp.crowding_distance = this.crowding_distance;
-		cp.parents = this.parents;
-		return cp;
-	}
-	
-	/**
-	 * copy this chromosome using object serialization into memory
-	 * @return a reference to copy of this object
-	 */
-	public Chromosome hard_copy_me() {
-		Chromosome copy_chrom = null;
-		try {
-			ByteArrayOutputStream baOut = new ByteArrayOutputStream();
-			ObjectOutputStream oOut = new ObjectOutputStream(new BufferedOutputStream(baOut));
-			oOut.writeObject(this);
-			oOut.flush();
-			ByteArrayInputStream baIn = new ByteArrayInputStream(baOut.toByteArray());
-			ObjectInputStream oIn = new ObjectInputStream(baIn);
-			copy_chrom = (Chromosome)oIn.readObject();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+	public Chromosome(Chromosome source) {
+		this.crowding_distance = source.crowding_distance;
+		this.dominant_count = source.getDCount();
+		this.domination_rank = source.domination_rank;
+		this.domination_set = new HashSet<Chromosome>();	//we do not need this to be copied
+		this.fitness_vector = source.fitness_vector;
+		this.mChromeSize = source.getChromeSize();
+		this.mGenes = new double[source.mGenes.length];
+		for (int i = 0;i < mGenes.length;i++) {
+			mGenes[i] = source.mGenes[i];
 		}
-		return copy_chrom;
+		this.parents = source.parents;
 	}
-
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//getter / setter methods
 	//////////////////////////////////////////////////////////////////////////////////////////

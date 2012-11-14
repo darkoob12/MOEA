@@ -20,6 +20,7 @@ import java.util.Scanner;
  * @author Shahab
  *
  */
+@SuppressWarnings("unused")
 public class NSGA2 extends EvoAlgorithm {	
 	public Population cur_pop;		// we can use this as the combined population	
 	public Population child_pop;	
@@ -294,8 +295,8 @@ public class NSGA2 extends EvoAlgorithm {
 				child_2 = children_list[1];
 			} else {
 				// in this case we simply copy the parents
-				child_1 = (Chromosome)Utility.deep_copy(par_1);
-				child_2 = (Chromosome)Utility.deep_copy(par_2);
+				child_1 = new Chromosome(par_1);
+				child_2 = new Chromosome(par_2);
 			}
 			// apply mutation?
 			rnd_num = rnd.nextDouble();
