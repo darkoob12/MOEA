@@ -131,6 +131,8 @@ public class Utility {
 			ByteArrayInputStream baIn = new ByteArrayInputStream(baOut.toByteArray());
 			ObjectInputStream oIn = new ObjectInputStream(baIn);
 			copy_obj = oIn.readObject();
+			oOut.close();
+			oIn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
