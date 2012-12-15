@@ -1,5 +1,6 @@
 /**
- * 
+ * this problem has a linear pareto front and design in a way to introduce difficulties in
+ * converging to the pareto front hyper-plane
  */
 package emoAlgorithms;
 
