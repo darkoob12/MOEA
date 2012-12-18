@@ -140,4 +140,17 @@ public class Utility {
 		}
 		return copy_obj;
 	}
+	
+	/**
+	 *	a standard euclidean distance between two double vectors. 
+	 * @return
+	 */
+	public static double euclid_distance(double x[], double y[]) {
+		double ret = 0;
+		for (int i = 0;i < x.length;i++) {
+			ret += Math.pow(x[i] - y[i], 2);
+		}
+		ret = Math.sqrt(ret);
+		return ret;
+	}
 }

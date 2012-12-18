@@ -14,6 +14,7 @@ public abstract class EvoAlgorithm {
 	protected final double _defaultPc = 0.9;		//default value for crossover rate
 	protected final int _defaultPopSize = 100;		//default value for size of population
 	protected final int _defaultMaxGen = 500;		//default value for maximum number of generations
+	protected final int _defailtMaxFcnEval = 25000;		//default value for maximum number of fitness evaluations
 	
 	public boolean mSilent;		// this will be used for controlling algorithms output
 
@@ -23,6 +24,8 @@ public abstract class EvoAlgorithm {
 	private double Pc;  // crossover rate
 	private int pop_size;	// size of population in each generation
 	private int max_gen;	//maximum number of generations, used for stopping condition
+	private int max_fit_eval;	//maximum number of fitness evaluations
+	public int num_fit_eval;	//counting number of function evaluations.
 	public int gen_count;	// number of generations passed till now
 	/**
 	 * executes the algorithm, there is no return value since
@@ -84,5 +87,19 @@ public abstract class EvoAlgorithm {
 	 */
 	public void setMaxGen(int max_gen) {
 		this.max_gen = max_gen;
+	}
+
+	/**
+	 * @return the max_fit_eval
+	 */
+	public int getMaxFitEval() {
+		return max_fit_eval;
+	}
+
+	/**
+	 * @param max_fit_eval the max_fit_eval to set
+	 */
+	public void setMaxFitEval(int max_fit_eval) {
+		this.max_fit_eval = max_fit_eval;
 	}
 }

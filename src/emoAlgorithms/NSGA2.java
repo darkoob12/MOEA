@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
 
 /** NSGA2 algorithm
@@ -20,11 +19,12 @@ import java.util.Scanner;
  * @author Shahab
  *
  */
-@SuppressWarnings("unused")
 public class NSGA2 extends EvoAlgorithm {	
 	public Population cur_pop;		// we can use this as the combined population	
 	public Population child_pop;	
 	public Population next_pop;
+	
+	public HashSet<Chromosome> non_dominated_set;	//final non-dominated set of solutions
 	
 	/**
 	 * simple constructor for the class
@@ -35,6 +35,8 @@ public class NSGA2 extends EvoAlgorithm {
 		this.setPm(_defaultPm);
 		this.setPop_size(_defaultPopSize);
 		this.setMaxGen(_defaultMaxGen);
+		this.setMaxFitEval(_defailtMaxFcnEval);
+		this.num_fit_eval = 0;
 	}
 	
 	/** Constructor 
@@ -48,6 +50,8 @@ public class NSGA2 extends EvoAlgorithm {
 		this.setPm(_defaultPm);
 		this.setPop_size(_defaultPopSize);
 		this.setMaxGen(_defaultMaxGen);
+		this.setMaxFitEval(_defailtMaxFcnEval);
+		this.num_fit_eval = 0;
 	}
 	
 	/* (non-Javadoc)
@@ -109,6 +113,28 @@ public class NSGA2 extends EvoAlgorithm {
 			// check for the stopping condition
 			if (gen_count > getMaxGen()) {
 				done = true;
+				// now the last non-dominated set of solutions should be obtained
+				for (Chromosome ch : cur_pop) {
+					ch.setDCount(0);
+				}
+				
+				// calculating domination count of each chromosome in the population
+				for (Chromosome p : cur_pop) {
+					for (Chromosome q: cur_pop) {
+						if (p != q) {
+							if (mProblem.dominates(p.fitness_vector, q.fitness_vector)) {
+								q.setDCount(q.getDCount() + 1);
+							}
+						}
+					}
+				}
+				// adding solutions with zero domination count to the final solution set
+				non_dominated_set = new HashSet<Chromosome>();
+				for (Chromosome ch : cur_pop) {
+					if (ch.getDCount() == 0 ) {
+						non_dominated_set.add(ch);
+					}
+				}
 			}
 			
 			// create new chromosomes
@@ -150,8 +176,9 @@ public class NSGA2 extends EvoAlgorithm {
 	 */
 	public void evaluate(Population pop) {
 		for (Chromosome chrom : pop) {
-			double sol[] = chrom.decode();	// decoding from geno-type space represnetation
+			double sol[] = chrom.decode();	// decoding from geno-type space representation
 			chrom.fitness_vector = mProblem.fitness(sol);	// evaluation solution's fitness
+			this.num_fit_eval++;		//counting number of fitness evaluations
 		}
 	}
 	
@@ -166,8 +193,6 @@ public class NSGA2 extends EvoAlgorithm {
 		ArrayList<HashSet<Chromosome>> F = new ArrayList<HashSet<Chromosome>>();
 		//first we create highest non-dominated front - F1
 		HashSet<Chromosome> Q = new HashSet<Chromosome>();
-		int dominates = 0;
-		int dominated = 0;
 		// chrom is P in the original work
 		for (Chromosome chrom : pop) {
 			//initialize internal fields of chromosome
@@ -178,11 +203,9 @@ public class NSGA2 extends EvoAlgorithm {
 				if (mProblem.dominates(chrom.fitness_vector, other_chrom.fitness_vector)) {
 					//add other_chrom to current chromosome's domination set
 					chrom.domination_set.add(other_chrom);
-					dominates++;
 				} else if (mProblem.dominates(other_chrom.fitness_vector, chrom.fitness_vector)) {
 					//increase current chromosome's dominant count by 1
 					chrom.setDCount(chrom.getDCount() + 1);
-					dominated++;
 				} 
 			}
 			if (chrom.getDCount() == 0) {
@@ -191,26 +214,7 @@ public class NSGA2 extends EvoAlgorithm {
 				Q.add(chrom);	//add to first non-dominated front
 			}
 		} // for loop - iterating through all chromosomes
-		F.add(Q);		// adding first front to the collection
-		
-		int sum_sp = 0;
-		int sum_np = 0;
-		for (Chromosome p : cur_pop) {
-			sum_sp += p.domination_set.size();
-			sum_np += p.getDCount();
-		}
-		if (sum_np != sum_sp) {
-			System.out.println("ERROR");
-			if ((dominated != sum_np) || (dominates != sum_sp)){
-				System.out.println("SUPER ERROR");
-				String output = "Actual operations:\n";
-				output += "dominant : " + dominated + "  dominated : " + dominates + "\n";
-				output += "resulted data:\n";
-				output += "sum_np : " + sum_np + "   sum_sp : " +sum_sp + "\n"; 
-				System.out.println(output);
-				System.exit(1);
-			}
-		}
+		F.add(Q);		// adding first front to the collection		
 		
 		// now the first front is created , we will create other fronts
 		// by doing this we will reduce computation time severely
@@ -237,7 +241,6 @@ public class NSGA2 extends EvoAlgorithm {
 				F.add(Q);
 			}
 		} //while loop
-		System.out.println(gen_count);
 		return F;
 	}	
 	
