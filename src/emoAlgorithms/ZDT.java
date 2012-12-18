@@ -18,7 +18,7 @@ public abstract class ZDT extends MOProblem {
 		ret[0] = f1(point);
 		double g_x = g(point);
 		ret[1] = g_x * h(ret[0], g_x);
-		return null;
+		return ret;
 	}
 
 	protected abstract double g(double x[]);

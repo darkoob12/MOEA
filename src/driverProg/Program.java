@@ -10,10 +10,10 @@ public class Program {
 	public static void main(String[] args) {
 		
 		// first define a problem to solve;
-		DTLZ1 myProb = new DTLZ1(3,2);
+		ZDT myProb = new ZDT1(3);
 		
 		
-		//Creating an instance of algorithm to solve the problem
+		// Creating an instance of algorithm to solve the problem
 		NSGA2 myAlg = new NSGA2(myProb);
 		myAlg.run();
 
