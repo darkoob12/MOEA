@@ -17,7 +17,10 @@ public class Program {
 		// Creating an instance of algorithm to solve the problem
 		NSGA2 myAlg = new NSGA2(myProb);
 		myAlg.run();
-		System.out.println(myAlg.non_dominated_set.size());
+		System.out.println(myProb.known_solutions[0].length);
+		System.out.println(myAlg.cur_pop.mMembers.get(0).fitness_vector.length);
+		double gamma = myProb.compute_gamma(myAlg.cur_pop);
+		System.out.println(gamma);
 		System.out.println("Hello World~");
 	}
 

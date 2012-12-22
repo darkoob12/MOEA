@@ -9,8 +9,6 @@ package emoAlgorithms;
  */
 public abstract class ZDT extends MOProblem {
 
-	int size_h;
-	protected double known_solutions[][];	// this is H set in the Paper		 
 	/* (non-Javadoc)
 	 * @see emoAlgorithms.MOProblem#fitness(double[])
 	 */

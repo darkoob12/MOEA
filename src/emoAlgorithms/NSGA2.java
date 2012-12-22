@@ -70,8 +70,8 @@ public class NSGA2 extends EvoAlgorithm {
 		// evaluate fitness for each newly created chromosome;
 		evaluate(child_pop);		
 		// main loop
-		boolean done = false;
-		while (!done) {
+
+		while (true) {
 			// combine the parent population and the children population 
 			cur_pop.mergeWith(child_pop);
 			// select next generation from union of parent and children populations
@@ -112,29 +112,8 @@ public class NSGA2 extends EvoAlgorithm {
 			
 			// check for the stopping condition
 			if (gen_count > getMaxGen()) {
-				done = true;
-				// now the last non-dominated set of solutions should be obtained
-				for (Chromosome ch : cur_pop) {
-					ch.setDCount(0);
-				}
-				
-				// calculating domination count of each chromosome in the population
-				for (Chromosome p : cur_pop) {
-					for (Chromosome q: cur_pop) {
-						if (p != q) {
-							if (mProblem.dominates(p.fitness_vector, q.fitness_vector)) {
-								q.setDCount(q.getDCount() + 1);
-							}
-						}
-					}
-				}
-				// adding solutions with zero domination count to the final solution set
-				non_dominated_set = new HashSet<Chromosome>();
-				for (Chromosome ch : cur_pop) {
-					if (ch.getDCount() == 0 ) {
-						non_dominated_set.add(ch);
-					}
-				}
+				cur_pop.reset_dom_count();		//this will indicate the non-dominated solutions
+				break;
 			}
 			
 			// create new chromosomes

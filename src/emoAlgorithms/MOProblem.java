@@ -17,6 +17,9 @@ public abstract class MOProblem {
 	 */
 	public double decision_extremes[][];	
 	
+	public int size_h;
+	public double known_solutions[][];	// this is H set in the Paper		 
+	protected double known_sol_fitness[][];	// fitness of the H known solutions
 	public OPType mType;	//minimization should be the default problem type.
 	
 	
@@ -51,6 +54,50 @@ public abstract class MOProblem {
 		this.mNumObjectives = mNumObjectives;
 	}
 	
+	/**
+	 * This is the metric that measures convergence of algorithm to the pareto front
+	 */
+	public double compute_gamma(Population f_pop) {
+		comp_known_fit();
+		double ret = 0;
+		int non_dominated_count = 0;
+		for (Chromosome ch : f_pop) {
+			if (ch.getDCount() == 0) {
+				ret += min_distance(ch.fitness_vector);
+				non_dominated_count++;
+			}
+		}		
+		System.out.println(non_dominated_count);
+		return (ret/non_dominated_count);
+	}
+	
+	
+	
+	/**
+	 * find minimum distance of the given vector to set of known solutions
+	 * @return
+	 */
+	protected double min_distance(double fit_vect[]) {
+		double min_d = Utility.euclid_distance(known_sol_fitness[0], fit_vect);
+		for (int i = 1;i < known_solutions.length;i++) {
+			double temp = Utility.euclid_distance(known_sol_fitness[i], fit_vect);
+			if (temp < min_d) {
+				min_d = temp;
+			}
+		}
+		return min_d;
+	}
+	
+	/**
+	 * computing fitness vectors for each of the H known solutions
+	 */
+	public void comp_known_fit() {
+		known_sol_fitness = new double[size_h][];
+		for (int i = 0;i < size_h;i++) {
+			known_sol_fitness[i] = new double[getNumObjectives()];
+			known_sol_fitness[i] = fitness(known_solutions[i]);
+		}
+	}
 
 	/** Domination relation
 	 * 
