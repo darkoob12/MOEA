@@ -60,15 +60,14 @@ public class ZDT1 extends ZDT {
 	 */
 	public void prepare() {
 		// creating known optimal solutions set
-		int counter = 0;
+
 		known_solutions = new double[size_h][];
 		for (int i = 0;i < size_h;i++) {
 			known_solutions[i] = new double[getNumVariables()];
 			for (int j = 1;j < known_solutions[i].length;j++) {
 				known_solutions[i][j] = 0;
 			}
-			known_solutions[i][0] = counter / size_h;
-			counter++;
+			known_solutions[i][0] = i / (double)size_h;
 		}
 		//changing the last solution so we will have the two extreme solutions in the set
 		known_solutions[size_h-1][0] = 1;

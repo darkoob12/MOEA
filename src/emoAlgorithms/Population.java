@@ -89,4 +89,19 @@ public class Population implements Iterable<Chromosome> {
 	public Iterator<Chromosome> iterator() {
 		return mMembers.iterator();
 	}
+	/**
+	 * according to domination set of each chromosome calculate domination count of
+	 * each member
+	 */
+	public void reset_dom_count() {	
+		for (Chromosome ch : mMembers) {
+			ch.setDCount(0);	//initialize for counting
+		}
+		for (Chromosome ch : mMembers) {
+			for (Chromosome dominated_ch : ch.domination_set) {
+				dominated_ch.setDCount(dominated_ch.getDCount() + 1);
+			}
+		}
+	}
+	
 }
