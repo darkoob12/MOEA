@@ -5,10 +5,14 @@ package emoAlgorithms;
 
 /**
  * @author Shahab
- *
+ *	in zdt problems number of objectives are fix and is 2.
  */
 public class ZDT1 extends ZDT {
 	
+	/**
+	 * constructor for objects of this type
+	 * @param m	number of variables
+	 */
 	public ZDT1(int m) {
 		this.size_h = 500;		//this value is set in the main paper of NSGA2
 		this.setNumObjectives(2);

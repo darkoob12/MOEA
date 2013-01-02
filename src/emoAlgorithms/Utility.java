@@ -110,7 +110,7 @@ public class Utility {
 	public static String arr2str(double array[]) {
 		String ret = "< ";
 		for (double d : array) {
-			ret += d + " ";
+			ret += Double.toString(d) + " ";
 		}
 		ret += ">";
 		return ret;
@@ -154,3 +154,4 @@ public class Utility {
 		return ret;
 	}
 }
+
