@@ -13,7 +13,6 @@ import java.util.Iterator;
  */
 public class Population implements Iterable<Chromosome> {
 	private int mSize;
-	
 	public ArrayList<Chromosome> mMembers; 
 	
 	/** Constructor 
@@ -102,6 +101,5 @@ public class Population implements Iterable<Chromosome> {
 				dominated_ch.setDCount(dominated_ch.getDCount() + 1);
 			}
 		}
-	}
-	
+	}	
 }

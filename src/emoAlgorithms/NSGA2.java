@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
+
 /** NSGA2 algorithm
  * 
  * this is exactly the algorithm proposed in the original work by
@@ -63,8 +64,11 @@ public class NSGA2 extends EvoAlgorithm {
 		initialization();
 		//Evaluating fitness for the randomly generated chromosomes
 		evaluate(cur_pop);
-
+		
 		// create first generation , this will make our implementation adhering the original paper
+		// tournament selection in this stage will not apply any selection pressure since 
+		// we have not ranked solutions yet and they are indifferent according to crowded comparison 
+		// operator
 		make_new_pop();		//this function populates child_pop using cur_pop
 		gen_count = 0;		//initializing generation counter
 		// evaluate fitness for each newly created chromosome;
@@ -117,7 +121,7 @@ public class NSGA2 extends EvoAlgorithm {
 			}
 			
 			// create new chromosomes
-			make_new_pop();
+			make_new_pop();		
 			// evaluating fitness for newly created chromosomes			
 			evaluate(child_pop);			
 		}
@@ -254,11 +258,12 @@ public class NSGA2 extends EvoAlgorithm {
 	/** generate new population
 	 * creates a new population by applying genetic operators like parent selection,
 	 * crossover, mutation, ... and saves the new offsprings in the child_pop object
+	 * @param isInitial whether this current population is initial or not.
 	 */
 	public void make_new_pop() {
 		// psudo-random number generator for applying mutation and crossover rates
 		Random rnd = new Random(System.currentTimeMillis());
-		double rnd_num = 0;
+		double rnd_num = 0;   // will be used in random decision making
 		// creating an empty population
 		child_pop = new Population(cur_pop.getSize());
 		// creating new chromosomes until the population is full
@@ -313,6 +318,7 @@ public class NSGA2 extends EvoAlgorithm {
 		}
 		Chromosome first_chrom = cur_pop.mMembers.get(index_1);
 		Chromosome second_chrom = cur_pop.mMembers.get(index_2);
+		// initial population dose not have any rank or crowding distance
 		if (first_chrom.crowded_compare_to(second_chrom)) {
 			return first_chrom;
 		} else {

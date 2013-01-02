@@ -168,6 +168,15 @@ public class Chromosome implements Comparator<Chromosome>, Serializable {
 	}
 	
 	/**
+	 * whether this object dominates other chromosome or not.
+	 * @param other_chrom	a chromosome with evaluated fitness 
+	 * @return	true means yes!!!
+	 */
+	public boolean dominates(Chromosome other_chrom) {
+		return Utility.pareto_dominate(this.fitness_vector, other_chrom.fitness_vector);
+	}
+	
+	/**
 	 * this is an override of object method
 	 * returns a string describing this chromosome
 	 */
