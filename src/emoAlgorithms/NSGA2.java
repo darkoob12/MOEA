@@ -335,7 +335,7 @@ public class NSGA2 extends EvoAlgorithm {
 	 * @param parent_2	second parent
 	 * @return	an array containing the two generated offsprings
 	 */
-	protected Chromosome[] simulated_bin_xover(Chromosome parent_1, Chromosome parent_2) {
+	public Chromosome[] simulated_bin_xover(Chromosome parent_1, Chromosome parent_2) {
 		// creating two new chromosomes
 		Chromosome childs[] = new Chromosome[2];
 		for (int i = 0;i < childs.length;i++) {
@@ -369,7 +369,7 @@ public class NSGA2 extends EvoAlgorithm {
 		double rnd_num_1 = rnd.nextDouble();
 		// this is for sampling from the beta pdf.
 		double rnd_num_2 = rnd.nextDouble();
-		if (rnd_num_1 < 0.5) {
+		if (rnd_num_1 <= 0.5) {
 			beta = Math.pow(2 * rnd_num_2, 1 / (1 + eta));
 		} else {
 			beta = 1 / Math.pow(2 * (1 - rnd_num_2), 1 / (1 + eta));
@@ -391,7 +391,7 @@ public class NSGA2 extends EvoAlgorithm {
 	}
 	
 	/**
-	 * random number generator for polynomial ditributaion for polynomial mutation operator
+	 * random number generator for polynomial distribution for polynomial mutation operator
 	 * @param eta this is directly related to the mutation amount
 	 * @return	a positive double value
 	 */

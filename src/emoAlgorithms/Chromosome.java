@@ -193,6 +193,8 @@ public class Chromosome implements Comparator<Chromosome>, Serializable {
 				ret += objective + " ";
 			}
 			ret += ")";
+		} else {
+			ret += " :: not-evaluated";
 		}
 		return ret;
 	}
