@@ -5,7 +5,7 @@ import emoAlgorithms.*;
 public class PartialTest {
 
 	public static void main(String[] args) {
-		ZDT problem = new ZDT1(2);
+		ZDT1 problem = new ZDT1(2);
 		NSGA2 alg = new NSGA2(problem);
 		alg.initialization();
 		alg.evaluate(alg.cur_pop);

@@ -27,7 +27,7 @@ public class ZDT1 extends ZDT {
 			decision_extremes[i][1] = 1;
 		}		
 		
-		prepare();
+		prepare();		//compute some known pareto optimal solutions spreaded in the front
 		
 	}
 
@@ -40,7 +40,7 @@ public class ZDT1 extends ZDT {
 		for (int i = 1;i < x.length;i++) {
 			sum += x[i];
 		}
-		return (1 + (9 * sum));
+		return (1 + 9*(sum/(x.length - 1)));
 	}
 
 	/* (non-Javadoc)
@@ -56,6 +56,7 @@ public class ZDT1 extends ZDT {
 	 */
 	@Override
 	protected double h(double f1x, double gx) {
+		if (gx == 0) System.out.println(gx);
 		return (1 - Math.sqrt(f1x / gx));
 	}
 
@@ -64,10 +65,9 @@ public class ZDT1 extends ZDT {
 	 */
 	public void prepare() {
 		// creating known optimal solutions set
-
 		known_solutions = new double[size_h][];
 		for (int i = 0;i < size_h;i++) {
-			known_solutions[i] = new double[getNumVariables()];
+			known_solutions[i] = new double[getNumVariables()];	//a vector for decision variables
 			for (int j = 1;j < known_solutions[i].length;j++) {
 				known_solutions[i][j] = 0;
 			}
@@ -75,5 +75,8 @@ public class ZDT1 extends ZDT {
 		}
 		//changing the last solution so we will have the two extreme solutions in the set
 		known_solutions[size_h-1][0] = 1;
+		/**
+		 * seems to be ok
+		 */
 	}
 }

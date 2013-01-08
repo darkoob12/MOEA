@@ -18,7 +18,7 @@ public abstract class MOProblem {
 	public double decision_extremes[][];	
 	
 	public int size_h;
-	public double known_solutions[][];	// this is H set in the Paper		 
+	public double known_solutions[][];	// this is H set in the Paper  -- is populated in sub-classes		 
 	protected double known_sol_fitness[][];	// fitness of the H known solutions
 	public OPType mType;	//minimization should be the default problem type.
 	
@@ -58,17 +58,18 @@ public abstract class MOProblem {
 	 * This is the metric that measures convergence of algorithm to the pareto front
 	 */
 	public double compute_gamma(Population f_pop) {
-		comp_known_fit();
+		comp_known_fit();		//we must use fitness vectors
 		double ret = 0;
-		int non_dominated_count = 0;
 		for (Chromosome ch : f_pop) {
-			if (ch.getDCount() == 0) {
-				ret += min_distance(ch.fitness_vector);
-				non_dominated_count++;
+			double foo = min_distance(ch.fitness_vector);
+			if (Double.isNaN(foo)) {
+				System.out.println("Not A Number!!!!!");
+				System.out.println(ch.toString());
+			} else {
+				ret += foo;
 			}
 		}		
-		System.out.println(non_dominated_count);
-		return (ret/non_dominated_count);
+		return (ret/f_pop.mMembers.size());
 	}
 	
 	
@@ -92,8 +93,8 @@ public abstract class MOProblem {
 	 * computing fitness vectors for each of the H known solutions
 	 */
 	public void comp_known_fit() {
-		known_sol_fitness = new double[size_h][];
-		for (int i = 0;i < size_h;i++) {
+		known_sol_fitness = new double[size_h][];		//size_h is number of known solutions
+		for (int i = 0;i < this.size_h;i++) {
 			known_sol_fitness[i] = new double[getNumObjectives()];
 			known_sol_fitness[i] = fitness(known_solutions[i]);
 		}

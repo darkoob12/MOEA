@@ -38,6 +38,8 @@ public class NSGA2 extends EvoAlgorithm {
 		this.setMaxGen(_defaultMaxGen);
 		this.setMaxFitEval(_defailtMaxFcnEval);
 		this.num_fit_eval = 0;
+		this.setEthaC(20);
+		this.setEthaM(20);
 	}
 	
 	/** Constructor 
@@ -47,11 +49,13 @@ public class NSGA2 extends EvoAlgorithm {
 	public NSGA2(MOProblem argProb) {
 		mProblem = argProb;
 		mSilent = false;
-		this.setPc(_defaultPc);
-		this.setPm(_defaultPm);
-		this.setPop_size(_defaultPopSize);
-		this.setMaxGen(_defaultMaxGen);
-		this.setMaxFitEval(_defailtMaxFcnEval);
+		this.setPc(0.9);
+		this.setPm(1 / (double) mProblem.getNumVariables());
+		this.setPop_size(100);
+		this.setMaxGen(500);
+		this.setMaxFitEval(25000);
+		this.setEthaC(20);
+		this.setEthaM(20);
 		this.num_fit_eval = 0;
 	}
 	
@@ -291,6 +295,9 @@ public class NSGA2 extends EvoAlgorithm {
 				poly_mutation(child_1);
 				poly_mutation(child_2);
 			}
+			// first check whether the new chromosomes are feasible or not.
+			check_bounds(child_1);
+			check_bounds(child_2);
 			// now we add the new children to the population
 			// but before that we check for enough capacity of the population
 			if (child_pop.mMembers.size() < child_pop.getSize()) {
@@ -298,6 +305,23 @@ public class NSGA2 extends EvoAlgorithm {
 			}
 			if (child_pop.mMembers.size() < child_pop.getSize()) {
 				child_pop.mMembers.add(child_2);
+			}
+		}
+	}
+
+	
+	/**
+	 * checks whether a givens chromosomes genes are in the correct interval or not
+	 * @param ch	chromosome to check
+	 */
+	protected void check_bounds(Chromosome ch) {
+		for (int i = 0;i < ch.mGenes.length;i++) { 
+			if (ch.mGenes[i] < mProblem.decision_extremes[i][0]) {
+				// is less than the lower bound should get corected
+				ch.mGenes[i] = mProblem.decision_extremes[i][0];
+			} else if (ch.mGenes[i] > mProblem.decision_extremes[i][1]) {
+				//is greater than the upper bound 
+				ch.mGenes[i] = mProblem.decision_extremes[i][1];
 			}
 		}
 	}
@@ -347,12 +371,14 @@ public class NSGA2 extends EvoAlgorithm {
 		}
 		// for each loci in the chromosomes we need to generate a random number.
 		for (int i = 0;i < parent_1.getChromeSize();i++){
-			double beta = beta_generator(20);	// generates a new beta for each loci
+			double beta = beta_generator(getEthaC());	// generates a new beta for each loci
 			childs[0].mGenes[i] = 0.5*((1-beta)*parent_1.mGenes[i] + (1+beta)*parent_2.mGenes[i]);
 			childs[1].mGenes[i] = 0.5*((1+beta)*parent_1.mGenes[i] + (1-beta)*parent_2.mGenes[i]);
 		}
+		
 		return childs;
 	}
+
 	
 	/**
 	 * generates a sample of beta ,in the sbx operator, distribution
@@ -385,7 +411,7 @@ public class NSGA2 extends EvoAlgorithm {
 	 */
 	protected void poly_mutation(Chromosome chr) {
 		for (int i = 0;i < chr.getChromeSize();i++) {
-			double delta = delta_generator(100);
+			double delta = delta_generator(getEthaM());
 			chr.mGenes[i] += (mProblem.decision_extremes[i][0] - mProblem.decision_extremes[i][1]) * delta;
 		}
 	}

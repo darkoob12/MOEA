@@ -11,7 +11,7 @@ public class Program {
 	public static void main(String[] args) {
 		
 		// first define a problem to solve;
-		ZDT myProb = new ZDT1(9);
+		ZDT1 myProb = new ZDT1(30);
 		
 		
 		// Creating an instance of algorithm to solve the problem

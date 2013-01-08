@@ -27,6 +27,8 @@ public abstract class EvoAlgorithm {
 	private int max_fit_eval;	//maximum number of fitness evaluations
 	public int num_fit_eval;	//counting number of function evaluations.
 	public int gen_count;	// number of generations passed till now
+	private int etha_c;		//distribution index for sbx
+	private int etha_m;		//distribution index for poly-muatation
 	/**
 	 * executes the algorithm, there is no return value since
 	 * results are stored as objects states
@@ -101,5 +103,33 @@ public abstract class EvoAlgorithm {
 	 */
 	public void setMaxFitEval(int max_fit_eval) {
 		this.max_fit_eval = max_fit_eval;
+	}
+
+	/**
+	 * @return the etha_c
+	 */
+	public int getEthaC() {
+		return etha_c;
+	}
+
+	/**
+	 * @param etha_c the etha_c to set
+	 */
+	public void setEthaC(int etha_c) {
+		this.etha_c = etha_c;
+	}
+
+	/**
+	 * @return the etha_m
+	 */
+	public int getEthaM() {
+		return etha_m;
+	}
+
+	/**
+	 * @param etha_m the etha_m to set
+	 */
+	public void setEthaM(int etha_m) {
+		this.etha_m = etha_m;
 	}
 }
