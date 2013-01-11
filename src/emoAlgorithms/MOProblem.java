@@ -11,6 +11,7 @@ public abstract class MOProblem {
 	private int mNumVariables;
 	private int mNumObjectives;
 	
+	
 	/**
 	 * minimum and maximum values for each decision variable , N*2
 	 * for computing this we need a prior knowledge or we need to do some pre-processing
@@ -60,16 +61,27 @@ public abstract class MOProblem {
 	public double compute_gamma(Population f_pop) {
 		comp_known_fit();		//we must use fitness vectors
 		double ret = 0;
+		int non_dominated_count = 0;
+		int foo_count  = 0;
 		for (Chromosome ch : f_pop) {
-			double foo = min_distance(ch.fitness_vector);
-			if (Double.isNaN(foo)) {
-				System.out.println("Not A Number!!!!!");
-				System.out.println(ch.toString());
-			} else {
-				ret += foo;
+			//we must consider only non-dominated members of population
+			if (ch.getDCount() == 0) {
+				double foo = min_distance(ch.fitness_vector);
+				if (Double.isNaN(foo)) {
+					System.out.println("Not A Number!!!!!");
+					System.out.println(ch.toString());
+				} else {
+					if (foo == 0) {
+						foo_count++;
+					}
+					ret += foo;
+					non_dominated_count++;
+				}
 			}
 		}		
-		return (ret/f_pop.mMembers.size());
+		System.out.println("Number of non_dominated solutions : " + Integer.toString(non_dominated_count));
+		System.out.println("Number of Exact Solutions : " + Integer.toString(foo_count));
+		return (ret/non_dominated_count);
 	}
 	
 	
