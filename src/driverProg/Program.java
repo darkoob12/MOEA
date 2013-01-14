@@ -3,15 +3,21 @@ package driverProg;
 import emoAlgorithms.*;
 
 public class Program {
+	public static int used_count;
+	public static int total_count;
 
 	/**
 	 * main routine of the program
 	 * @param args command line arguments
 	 */
 	public static void main(String[] args) {
+		//counter initialization.
+		used_count = 0;
+		total_count = 0;
+		
 		
 		// first define a problem to solve;
-		ZDT1 myProb = new ZDT1(20);
+		ZDT1 myProb = new ZDT1(30);
 		
 		
 		// Creating an instance of algorithm to solve the problem
@@ -30,6 +36,11 @@ public class Program {
 				}
 			}
 		}
+		System.out.println("\n-----------------");		
+		System.out.println("total comparisons : " + Integer.toString(total_count));
+		System.out.println("comparisons used crowding: " + Integer.toString(used_count));
+		System.out.println("percentage : " + Double.toString((used_count/(double)total_count)*100));
+		System.out.println("-----------------\n");
 		System.out.println("Hello World~");
 	}
 		

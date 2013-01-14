@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashSet;
 
+import driverProg.Program;
+
 /** Chromosome
  * 
  * it is a real coded chromosome
@@ -148,9 +150,11 @@ public class Chromosome implements Comparator<Chromosome>, Serializable {
 	 */
 	public boolean crowded_compare_to(Chromosome other_chrom) {
 		boolean ret = false;
+		Program.total_count++;
 		if ((this.getRank() < other_chrom.getRank()) || 
 		((this.getRank() == other_chrom.getRank()) && (this.crowding_distance > other_chrom.crowding_distance))) {
 			ret = true;		
+			Program.used_count++;
 		}
 		return ret;
 	}
