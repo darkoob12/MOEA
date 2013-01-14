@@ -13,7 +13,7 @@ public abstract class EvoAlgorithm {
 	protected final double _defaultPm = 0.08;		//default value for mutation rate
 	protected final double _defaultPc = 0.9;		//default value for crossover rate
 	protected final int _defaultPopSize = 100;		//default value for size of population
-	protected final int _defaultMaxGen = 500;		//default value for maximum number of generations
+	protected final int _defaultMaxGen = 250;		//default value for maximum number of generations
 	protected final int _defailtMaxFcnEval = 25000;		//default value for maximum number of fitness evaluations
 	
 	public boolean mSilent;		// this will be used for controlling algorithms output

@@ -53,7 +53,7 @@ public class NSGA2 extends EvoAlgorithm {
 		this.setPc(0.9);
 		this.setPm(1 / (double) mProblem.getNumVariables());
 		this.setPop_size(100);
-		this.setMaxGen(500);
+		this.setMaxGen(250);
 		this.setMaxFitEval(25000);
 		this.setEthaC(20);
 		this.setEthaM(20);
@@ -77,6 +77,11 @@ public class NSGA2 extends EvoAlgorithm {
 		/**
 		 * NON-DOMINATED SORTIG OF INITIAL POPULAITON IS NEEDED
 		 */
+		ArrayList<HashSet<Chromosome>> init_frontiers = fast_non_dominated_sort(cur_pop);
+		for (int s = 0;s < init_frontiers.size();s++) {
+			cd_assignment(init_frontiers.get(s));
+		}
+		///
 		make_new_pop();		//this function populates child_pop using cur_pop
 		gen_count = 0;		//initializing generation counter
 		// evaluate fitness for each newly created chromosome;
@@ -95,11 +100,13 @@ public class NSGA2 extends EvoAlgorithm {
 				//check whether we can add next front to the selected solutions completely or we 
 				//must select some of its members
 				if ((next_pop.mMembers.size() + script_f.get(k).size()) <= this.getPop_size()) {
-					// since crowding distance calculation is an accumulating process we need to do it for each set
+					// since crowding distance is used in tournament selection we need to do it for each set
 					cd_assignment(script_f.get(k));
 					//add the whole set to the next generation
 					next_pop.add_set(script_f.get(k));
 				} else {
+					// computing crowding distance for this frontier
+					cd_assignment(script_f.get(k));
 					// we must select the remaining solutions from the next front
 					// converting the set to array since we do not have ordering relation in sets
 					Chromosome[] last_front = new Chromosome[script_f.get(k).size()];
@@ -107,7 +114,6 @@ public class NSGA2 extends EvoAlgorithm {
 					cd_sort(last_front);	// sorting the last frontier according to the crowded dominance relation
 					// needed solutions for filling the next generation's population
 					int needed_chroms = this.getPop_size() - next_pop.mMembers.size();
-					
 					// check for possible errors
 					if (needed_chroms > last_front.length) {
 						System.out.println("early exiting the main loop : last front has not enough members");
@@ -116,6 +122,7 @@ public class NSGA2 extends EvoAlgorithm {
 					for (int i = 0;i < needed_chroms;i++) {
 						next_pop.mMembers.add(last_front[i]);
 					}
+					break;		//next_pop is full - no need for other frontiers
 				}
 			}
 			// passing a generation 
