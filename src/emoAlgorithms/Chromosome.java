@@ -212,4 +212,20 @@ public class Chromosome implements Comparator<Chromosome>, Serializable {
 		}
 	}
 	
+	/**
+	 * comparing genes of two chromosomes 
+	 * @param other_chrom	compare with this chromosome
+	 * @return	true if equal
+	 */
+	public boolean compare_gens(Chromosome other_chrom) {
+		return Utility.cmp_vector(mGenes, other_chrom.mGenes);
+	}
+	
+	/**
+	 * checks whether the argument's fitness vector is the same as this one or not
+	 */
+	public boolean compare_fitness(Chromosome other_chrom) {
+		return Utility.cmp_vector(fitness_vector, other_chrom.fitness_vector);
+	}
+	
 }

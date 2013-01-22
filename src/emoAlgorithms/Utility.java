@@ -153,5 +153,24 @@ public class Utility {
 		ret = Math.sqrt(ret);
 		return ret;
 	}
+	
+	/**
+	 * Checks whether two double vectors are equal or not.
+	 * @return true means x and y are equal
+	 */
+	public static boolean cmp_vector(double x[], double y[]) {
+		boolean ret = true;
+		if (x.length != y.length) {
+			ret = false;
+		} else {
+			for (int i = 0;i < x.length;i++) {
+				if (x[i] != y[i]) {
+					ret = false;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
 }
 

@@ -16,6 +16,12 @@ public class Program {
 		total_count = 0;
 		
 		
+		double foo[] = {1.4, 2.4, 5, 3.3};
+		double bar[] = {1, 2, 5, 3};
+		if (!Utility.cmp_vector(foo, bar)) {
+			System.out.println("CORRECT!!!");
+		}
+		
 		// first define a problem to solve;
 		ZDT1 myProb = new ZDT1(30);
 		
@@ -23,30 +29,23 @@ public class Program {
 		// Creating an instance of algorithm to solve the problem
 		NSGA2 myAlg = new NSGA2(myProb);
 		
-		double avg_gamma = batch_run(myProb, myAlg, 100);
-		System.out.println("Average Gamma = " + Double.toString(avg_gamma));
-		
-/*		myAlg.run();
+		myAlg.run();
 		System.out.print("Number of Variables : ");
 		System.out.println(myProb.known_solutions[0].length);
 		System.out.print("Number of Objectives : ");
 		System.out.println(myAlg.cur_pop.mMembers.get(0).fitness_vector.length);
 		double gamma = myProb.compute_gamma(myAlg.cur_pop);
 		System.out.println(gamma);
-		if (gamma == 0) {
-			for (Chromosome ch : myAlg.cur_pop) {
-				if (ch.getDCount() == 0) {
-					System.out.println(Utility.arr2str(ch.mGenes));
-				}
-			}
-		}
+		System.out.print("\nNumber of different Solutions in last Population : ");
+		int diff_chroms_count = myAlg.cur_pop.num_diff_chroms();
+		System.out.println(diff_chroms_count);
 		System.out.println("\n-----------------");		
 		System.out.println("total comparisons : " + Integer.toString(total_count));
 		System.out.println("comparisons used crowding: " + Integer.toString(used_count));
 		System.out.println("percentage : " + Double.toString((used_count/(double)total_count)*100));
 		System.out.println("-----------------\n");
 		System.out.println("Hello World~");
-*/	}
+	}
 		
 	/**
 	 * for running an algorithm on a specific function and calculating average of results

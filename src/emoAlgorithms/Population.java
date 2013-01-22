@@ -102,4 +102,16 @@ public class Population implements Iterable<Chromosome> {
 			}
 		}
 	}	
+	
+	/**
+	 * counts number of different chromosomes in the population
+	 * @return	an integer showing the desired number
+	 */
+	public int num_diff_chroms() {
+		testing.VectorSet fit_count = new testing.VectorSet();
+		for (Chromosome ch : this) {
+			fit_count.add(ch.fitness_vector);
+		}
+		return fit_count.getSize();
+	}		/** THIS METHOD IS NOT EFFICIENT ENOUGH **/ 
 }
