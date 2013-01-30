@@ -382,11 +382,11 @@ public class NSGA2 extends EvoAlgorithm {
 		}
 		// for each loci in the chromosomes we need to generate a random number.
 		for (int i = 0;i < parent_1.getChromeSize();i++){
-			double beta = beta_generator(getEthaC());	// generates a new beta for each loci
+			double beta = beta_generator_rev(getEthaC());	// generates a new beta for each loci
 			childs[0].mGenes[i] = 0.5*((1-beta)*parent_1.mGenes[i] + (1+beta)*parent_2.mGenes[i]);
 			childs[1].mGenes[i] = 0.5*((1+beta)*parent_1.mGenes[i] + (1-beta)*parent_2.mGenes[i]);
 		}
-		
+
 		return childs;
 	}
 
@@ -412,6 +412,23 @@ public class NSGA2 extends EvoAlgorithm {
 			beta = 1 / Math.pow(2 * (1 - rnd_num_2), 1 / (1 + eta));
 		}
 		
+		return beta;
+	}
+	
+	/**
+	 * sampling from the beta distribution stated in the paper using only one random number.
+	 * @param eta	distribution index for Beta
+	 * @return	a sample
+	 */
+	protected double beta_generator_rev(double eta) {
+		double beta = 0;
+		Random rnd = new Random(System.currentTimeMillis());
+		double seed = rnd.nextDouble();
+		if (seed <= 0.5) {
+			beta = Math.pow(2 * seed, 1.0 / (eta + 1));
+		} else {
+			beta = Math.pow(1 / (2 * (1 - seed)), 1.0 / (eta + 1));
+		}
 		return beta;
 	}
 	

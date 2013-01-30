@@ -14,14 +14,7 @@ public class Program {
 		//counter initialization.
 		used_count = 0;
 		total_count = 0;
-		
-		
-		double foo[] = {1.4, 2.4, 5, 3.3};
-		double bar[] = {1, 2, 5, 3};
-		if (!Utility.cmp_vector(foo, bar)) {
-			System.out.println("CORRECT!!!");
-		}
-		
+
 		// first define a problem to solve;
 		ZDT1 myProb = new ZDT1(30);
 		
