@@ -52,7 +52,7 @@ public class Utility {
 		for (int i = 0;i < chrom_list.length - 1;i++) {		//determining correct value of each position 
 			for (int j = i+1;j < chrom_list.length;j++) {		//comparing the current value of position i to all other positions
 				switch (type) {
-				case ASC:
+				case DSC:
 					if (chrom_list[i].fitness_vector[objective_index] < chrom_list[j].fitness_vector[objective_index]) {
 						// we may swap chromosomes at positions i and j
 						Chromosome temp = chrom_list[i];
@@ -60,7 +60,7 @@ public class Utility {
 						chrom_list[j] = temp;
 					}
 					break;
-				case DSC:
+				case ASC:
 					if (chrom_list[i].fitness_vector[objective_index] > chrom_list[j].fitness_vector[objective_index]) {
 						// we may swap chromosomes at positions i and j
 						Chromosome temp = chrom_list[i];

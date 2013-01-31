@@ -485,24 +485,28 @@ public class NSGA2 extends EvoAlgorithm {
 		for (Chromosome chrom : non_dominated_set) {
 			chrom.crowding_distance = 0;	
 		}
-		
+		int count = 0;
 		Chromosome lst[] = new Chromosome[non_dominated_set.size()];
 		for (int m  = 0;m < mProblem.getNumObjectives();m++) {
 			// sort the set of solutions according to m'th objective
 			lst = non_dominated_set.toArray(lst);
-			Utility.chr_sort(lst, m, Utility.SortType.DSC);
+			Utility.chr_sort(lst, m, Utility.SortType.ASC);
 			//assign the first and last solution of the list
 			//a crowding distance value of infinity - so they always will be selected
 			lst[0].crowding_distance = lst[lst.length - 1].crowding_distance = Double.MAX_VALUE;
-			double denominator = lst[lst.length - 1].fitness_vector[m] - lst[0].fitness_vector[m];			
-			for (int j = 1;j < lst.length - 2;j++) {
-				double foo = lst[j-1].fitness_vector[m] - lst[j+1].fitness_vector[m];
+			double denominator = lst[lst.length - 1].fitness_vector[m] - lst[0].fitness_vector[m];	
+			System.out.println("denominator = " + denominator);
+			for (int j = 1;j < lst.length - 1;j++) {
+				double foo = lst[j+1].fitness_vector[m] - lst[j-1].fitness_vector[m];
+				count++;
+				System.out.println("m = " + m);
 				// instead of using global minimum and maximum of m'th objective i used
 				// max and min of this objective in the current set of solutions.
 				lst[j].crowding_distance += foo/denominator;
 			}
 			
 		}
+		System.out.println(count);
 	}
 	
 	/**
