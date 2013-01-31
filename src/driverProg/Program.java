@@ -29,8 +29,8 @@ public class Program {
 		System.out.println(myAlg.cur_pop.mMembers.get(0).fitness_vector.length);
 		double gamma = myProb.compute_gamma(myAlg.cur_pop);
 		System.out.println(gamma);
-		System.out.print("\nNumber of different Solutions in last Population : ");
-		int diff_chroms_count = myAlg.cur_pop.num_diff_chroms();
+		System.out.print("\nNumber of different fitness vectors in last Population : ");
+		int diff_chroms_count = myAlg.cur_pop.num_diff_fits();
 		System.out.println(diff_chroms_count);
 		System.out.println("\n-----------------");		
 		System.out.println("total comparisons : " + Integer.toString(total_count));

@@ -104,10 +104,10 @@ public class Population implements Iterable<Chromosome> {
 	}	
 	
 	/**
-	 * counts number of different chromosomes in the population
+	 * counts number of chromosomes with different fitness in the population
 	 * @return	an integer showing the desired number
 	 */
-	public int num_diff_chroms() {
+	public int num_diff_fits() {
 		testing.VectorSet fit_count = new testing.VectorSet();
 		for (Chromosome ch : this) {
 			fit_count.add(ch.fitness_vector);

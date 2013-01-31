@@ -27,7 +27,7 @@ public class NSGA2 extends EvoAlgorithm {
 	
 	public HashSet<Chromosome> non_dominated_set;	//final non-dominated set of solutions
 	
-	//debugging the crowding distance calculations	
+
 	/**
 	 * simple constructor for the class
 	 */
@@ -81,24 +81,27 @@ public class NSGA2 extends EvoAlgorithm {
 		for (int s = 0;s < init_frontiers.size();s++) {
 			cd_assignment(init_frontiers.get(s));
 		}
-		///
-		make_new_pop();		//this function populates child_pop using cur_pop
-		gen_count = 0;		//initializing generation counter
-		// evaluate fitness for each newly created chromosome;
-		evaluate(child_pop);		
-		
+
+		gen_count = 0;		//initializing generation counter	
 		// main loop
 		while (true) {
+			// create new population using cur_pop and saving in child_pop
+			make_new_pop();
+			// evaluating fitness for the offspring population
+			evaluate(child_pop);
+			
 			// combine the parent population and the children population 
 			cur_pop.mergeWith(child_pop);
 			// select next generation from union of parent and children populations
+			//---------------------------------------------------------------------
+			// sorting the merged population into different domination fronts
 			ArrayList<HashSet<Chromosome>> script_f = fast_non_dominated_sort(cur_pop);
 			// creating a new empty population
 			next_pop = new Population(this.getPop_size());
 			// while we can add a whole frontier to the next population
 			for (int k = 0;k < script_f.size();k++) {
 				//check whether we can add next front to the selected solutions completely or we 
-				//must select some of its members
+				//must select only some of its members
 				if ((next_pop.mMembers.size() + script_f.get(k).size()) <= this.getPop_size()) {
 					// since crowding distance is used in tournament selection we need to do it for each set
 					cd_assignment(script_f.get(k));
@@ -134,11 +137,6 @@ public class NSGA2 extends EvoAlgorithm {
 				cur_pop.reset_dom_count();		//this will indicate the non-dominated solutions
 				break;
 			}
-			
-			// create new chromosomes
-			make_new_pop();		
-			// evaluating fitness for newly created chromosomes			
-			evaluate(child_pop);			
 		}
 		
 	}
@@ -371,6 +369,8 @@ public class NSGA2 extends EvoAlgorithm {
 	 * @return	an array containing the two generated offsprings
 	 */
 	public Chromosome[] simulated_bin_xover(Chromosome parent_1, Chromosome parent_2) {
+		//psuedo random number generator
+		Random rnd = new Random(System.currentTimeMillis());
 		// creating two new chromosomes
 		Chromosome childs[] = new Chromosome[2];
 		for (int i = 0;i < childs.length;i++) {
@@ -381,10 +381,17 @@ public class NSGA2 extends EvoAlgorithm {
 			childs[i].parents[1] = parent_2;
 		}
 		// for each loci in the chromosomes we need to generate a random number.
+		double lottery;
 		for (int i = 0;i < parent_1.getChromeSize();i++){
-			double beta = beta_generator_rev(getEthaC());	// generates a new beta for each loci
-			childs[0].mGenes[i] = 0.5*((1-beta)*parent_1.mGenes[i] + (1+beta)*parent_2.mGenes[i]);
-			childs[1].mGenes[i] = 0.5*((1+beta)*parent_1.mGenes[i] + (1-beta)*parent_2.mGenes[i]);
+			lottery = rnd.nextDouble();
+			if (lottery <= 0.5) { 
+				double beta = beta_generator_rev(getEthaC());	// generates a new beta for each loci
+				childs[0].mGenes[i] = 0.5*((1-beta)*parent_1.mGenes[i] + (1+beta)*parent_2.mGenes[i]);
+				childs[1].mGenes[i] = 0.5*((1+beta)*parent_1.mGenes[i] + (1-beta)*parent_2.mGenes[i]);
+			} else {
+				childs[0].mGenes[i] = parent_1.mGenes[i];
+				childs[1].mGenes[i] = parent_2.mGenes[i];
+			}
 		}
 
 		return childs;
@@ -483,7 +490,7 @@ public class NSGA2 extends EvoAlgorithm {
 		for (int m  = 0;m < mProblem.getNumObjectives();m++) {
 			// sort the set of solutions according to m'th objective
 			lst = non_dominated_set.toArray(lst);
-			Utility.chr_sort(lst, m, Utility.SortType.ASC);
+			Utility.chr_sort(lst, m, Utility.SortType.DSC);
 			//assign the first and last solution of the list
 			//a crowding distance value of infinity - so they always will be selected
 			lst[0].crowding_distance = lst[lst.length - 1].crowding_distance = Double.MAX_VALUE;
