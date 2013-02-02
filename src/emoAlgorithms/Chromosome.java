@@ -151,10 +151,13 @@ public class Chromosome implements Comparator<Chromosome>, Serializable {
 	public boolean crowded_compare_to(Chromosome other_chrom) {
 		boolean ret = false;
 		Program.total_count++;
-		if ((this.getRank() < other_chrom.getRank()) || 
-		((this.getRank() == other_chrom.getRank()) && (this.crowding_distance > other_chrom.crowding_distance))) {
-			ret = true;		
+		if (getRank() < other_chrom.getRank()) {
+			ret = true;
+		} else if (getRank() == other_chrom.getRank()) {
 			Program.used_count++;
+			if (crowding_distance > other_chrom.crowding_distance) {
+				ret = true;
+			}
 		}
 		return ret;
 	}

@@ -12,8 +12,10 @@ public class Program {
 	 */
 	public static void main(String[] args) {
 		//counter initialization.
+		
 		used_count = 0;
 		total_count = 0;
+
 
 		// first define a problem to solve;
 		ZDT1 myProb = new ZDT1(30);
@@ -22,6 +24,9 @@ public class Program {
 		// Creating an instance of algorithm to solve the problem
 		NSGA2 myAlg = new NSGA2(myProb);
 		
+/*		double average = batch_run(myProb, myAlg, 30);		
+		System.out.println("AVG = " + average);
+*/		
 		myAlg.run();
 		System.out.print("Number of Variables : ");
 		System.out.println(myProb.known_solutions[0].length);

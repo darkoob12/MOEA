@@ -24,7 +24,6 @@ public class NSGA2 extends EvoAlgorithm {
 	public Population cur_pop;		// we can use this as the combined population	
 	public Population child_pop;	
 	public Population next_pop;
-	
 	public HashSet<Chromosome> non_dominated_set;	//final non-dominated set of solutions
 	
 
@@ -70,13 +69,7 @@ public class NSGA2 extends EvoAlgorithm {
 		//Evaluating fitness for the randomly generated chromosomes
 		evaluate(cur_pop);
 		
-		// create first generation , this will make our implementation adhering the original paper
-		// tournament selection in this stage will not apply any selection pressure since 
-		// we have not ranked solutions yet and they are indifferent according to crowded comparison 
-		// operator
-		/**
-		 * NON-DOMINATED SORTIG OF INITIAL POPULAITON IS NEEDED
-		 */
+		// rank initial generation , this will make our implementation adhering the original paper
 		ArrayList<HashSet<Chromosome>> init_frontiers = fast_non_dominated_sort(cur_pop);
 		for (int s = 0;s < init_frontiers.size();s++) {
 			cd_assignment(init_frontiers.get(s));
@@ -89,7 +82,6 @@ public class NSGA2 extends EvoAlgorithm {
 			make_new_pop();
 			// evaluating fitness for the offspring population
 			evaluate(child_pop);
-			
 			// combine the parent population and the children population 
 			cur_pop.mergeWith(child_pop);
 			// select next generation from union of parent and children populations
@@ -99,6 +91,15 @@ public class NSGA2 extends EvoAlgorithm {
 			// creating a new empty population
 			next_pop = new Population(this.getPop_size());
 			// while we can add a whole frontier to the next population
+			
+			/*
+			 * debugging code
+			 */
+/*			System.out.println(script_f.get(0).size());
+			for (Chromosome ch : script_f.get(0)) {
+				System.out.println(ch);
+			}*/
+			
 			for (int k = 0;k < script_f.size();k++) {
 				//check whether we can add next front to the selected solutions completely or we 
 				//must select only some of its members
@@ -113,7 +114,7 @@ public class NSGA2 extends EvoAlgorithm {
 					// we must select the remaining solutions from the next front
 					// converting the set to array since we do not have ordering relation in sets
 					Chromosome[] last_front = new Chromosome[script_f.get(k).size()];
-					last_front = script_f.get(k).toArray(last_front);	
+					last_front = script_f.get(k).toArray(last_front);
 					cd_sort(last_front);	// sorting the last frontier according to the crowded dominance relation
 					// needed solutions for filling the next generation's population
 					int needed_chroms = this.getPop_size() - next_pop.mMembers.size();
@@ -131,7 +132,6 @@ public class NSGA2 extends EvoAlgorithm {
 			// passing a generation 
 			cur_pop = next_pop;
 			gen_count++;
-			
 			// check for the stopping condition
 			if (gen_count > getMaxGen()) {
 				cur_pop.reset_dom_count();		//this will indicate the non-dominated solutions
@@ -227,6 +227,7 @@ public class NSGA2 extends EvoAlgorithm {
 					}
 					else if (q.getDCount() < 0) {
 						//System.out.println("ERROR : Negative value for domination count");
+						System.out.println("FOO");
 					}
 				}
 			}
@@ -485,7 +486,6 @@ public class NSGA2 extends EvoAlgorithm {
 		for (Chromosome chrom : non_dominated_set) {
 			chrom.crowding_distance = 0;	
 		}
-		int count = 0;
 		Chromosome lst[] = new Chromosome[non_dominated_set.size()];
 		for (int m  = 0;m < mProblem.getNumObjectives();m++) {
 			// sort the set of solutions according to m'th objective
@@ -495,30 +495,26 @@ public class NSGA2 extends EvoAlgorithm {
 			//a crowding distance value of infinity - so they always will be selected
 			lst[0].crowding_distance = lst[lst.length - 1].crowding_distance = Double.MAX_VALUE;
 			double denominator = lst[lst.length - 1].fitness_vector[m] - lst[0].fitness_vector[m];	
-			System.out.println("denominator = " + denominator);
 			for (int j = 1;j < lst.length - 1;j++) {
 				double foo = lst[j+1].fitness_vector[m] - lst[j-1].fitness_vector[m];
-				count++;
-				System.out.println("m = " + m);
 				// instead of using global minimum and maximum of m'th objective i used
 				// max and min of this objective in the current set of solutions.
 				lst[j].crowding_distance += foo/denominator;
 			}
 			
 		}
-		System.out.println(count);
 	}
 	
 	/**
 	 * sort a list of chromosomes according to the crowded_dominance_relation
-	 * the best chromosomes will be  at top of the list
+	 * the most crowded chromosomes will be  at top of the list
 	 * i will implement a bubble sort again  
 	 * @param chrom_list	 an array of chromosomes
 	 */
 	public void cd_sort(Chromosome[] chrom_list) {
 		for (int i = 0;i < chrom_list.length - 1;i++) {
 			for (int j = i;j < chrom_list.length;j++) {
-				if (chrom_list[j].crowded_compare_to(chrom_list[i])) {
+				if (chrom_list[j].crowding_distance > chrom_list[i].crowding_distance) {
 					Chromosome temp = chrom_list[i];
 					chrom_list[i] = chrom_list[j];
 					chrom_list[j] = temp;
